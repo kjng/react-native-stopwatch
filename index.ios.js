@@ -6,20 +6,43 @@ import {
   View,
   TouchableHighlight
 } from 'react-native';
+import formatTime from 'minutes-seconds-milliseconds';
 
 export default class Stopwatch extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      running: false,
+      startTime: null,
+      timeElapsed: null,
+      laps: []
+    }
+    this.handleStartPress = this.handleStartPress.bind(this);
+  }
+
+  handleStartPress() {
+    this.setState({startTime: new Date()});
+
+    this.interval = setInterval(() => {
+      this.setState({
+        timeElapsed: new Date() - this.state.startTime,
+        running: true
+      })
+    }, 30);
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.timerWrapper}>
-            <Text style={styles.timer}>00:00.00</Text>
+            <Text style={styles.timer}>{this.state.timeElapsed}</Text>
           </View>
           <View style={styles.buttonWrapper}>
             <TouchableHighlight style={styles.button} underlayColor='gray' onPress={()=>{console.log('pressed lap')}}>
               <Text>Lap</Text>
             </TouchableHighlight>
-            <TouchableHighlight style={styles.button} underlayColor='gray' onPress={()=>{console.log('pressed start')}}>
+            <TouchableHighlight style={styles.button} underlayColor='gray' onPress={this.handleStartPress}>
               <Text>Start</Text>
             </TouchableHighlight>
           </View>
