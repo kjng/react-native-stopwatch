@@ -15,15 +15,17 @@ export default class Stopwatch extends Component {
       running: false,
       startTime: null,
       timeElapsed: null,
-      laps: []
+      laps: [],
+      lastLapTime: 0
     }
     this.handleStartStopPress = this.handleStartStopPress.bind(this);
+    this.handleLapPress = this.handleLapPress.bind(this);
   }
 
   handleStartStopPress() {
     if (this.state.running) {
       clearInterval(this.interval);
-      this.setState({running: false});
+      this.setState({running: false, laps: [], lastLapTime: 0});
       return;
     }
 
@@ -37,6 +39,19 @@ export default class Stopwatch extends Component {
     }, 30);
   }
 
+  handleLapPress() {
+    let lap = this.state.timeElapsed - this.state.lastLapTime;
+    if (this.state.running) {
+
+      console.log('Pressed Lap');
+      this.setState({
+        laps: this.state.laps.concat([lap]),
+        lastLapTime: this.state.timeElapsed
+      })
+      console.log(this.state.laps);
+    }
+  }
+
   render() {
     var borderColor = this.state.running ? styles.stopButton : styles.startButton;
 
@@ -47,7 +62,7 @@ export default class Stopwatch extends Component {
             <Text style={styles.timer}>{formatTime(this.state.timeElapsed)}</Text>
           </View>
           <View style={styles.buttonWrapper}>
-            <TouchableHighlight style={styles.button} underlayColor='gray' onPress={()=>{console.log('pressed lap')}}>
+            <TouchableHighlight style={styles.button} underlayColor='gray' onPress={this.handleLapPress}>
               <Text>Lap</Text>
             </TouchableHighlight>
             <TouchableHighlight style={[styles.button, borderColor]} underlayColor='gray' onPress={this.handleStartStopPress}>
@@ -59,14 +74,12 @@ export default class Stopwatch extends Component {
         </View>
 
         <View style={styles.footer}>
-          <View style={styles.lap}>
-            <Text style={styles.lapText}>Lap 1</Text>
-            <Text style={styles.lapText}>00:00.00</Text>
-          </View>
-          <View style={styles.lap}>
-            <Text style={styles.lapText}>Lap 2</Text>
-            <Text style={styles.lapText}>00:00.00</Text>
-          </View>
+          {this.state.laps.map((lap, index) => {
+            return <View style={styles.lap} key={index}>
+              <Text style={styles.lapText}>Lap {index}</Text>
+              <Text style={styles.lapText}>{formatTime(lap)}</Text>
+            </View>
+          })}
         </View>
       </View>
     );
