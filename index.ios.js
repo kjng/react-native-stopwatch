@@ -17,10 +17,16 @@ export default class Stopwatch extends Component {
       timeElapsed: null,
       laps: []
     }
-    this.handleStartPress = this.handleStartPress.bind(this);
+    this.handleStartStopPress = this.handleStartStopPress.bind(this);
   }
 
-  handleStartPress() {
+  handleStartStopPress() {
+    if (this.state.running) {
+      clearInterval(this.interval);
+      this.setState({running: false});
+      return;
+    }
+
     this.setState({startTime: new Date()});
 
     this.interval = setInterval(() => {
@@ -32,18 +38,22 @@ export default class Stopwatch extends Component {
   }
 
   render() {
+    var borderColor = this.state.running ? styles.stopButton : styles.startButton;
+
     return (
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.timerWrapper}>
-            <Text style={styles.timer}>{this.state.timeElapsed}</Text>
+            <Text style={styles.timer}>{formatTime(this.state.timeElapsed)}</Text>
           </View>
           <View style={styles.buttonWrapper}>
             <TouchableHighlight style={styles.button} underlayColor='gray' onPress={()=>{console.log('pressed lap')}}>
               <Text>Lap</Text>
             </TouchableHighlight>
-            <TouchableHighlight style={styles.button} underlayColor='gray' onPress={this.handleStartPress}>
-              <Text>Start</Text>
+            <TouchableHighlight style={[styles.button, borderColor]} underlayColor='gray' onPress={this.handleStartStopPress}>
+              <Text>
+                {this.state.running ? 'Stop' : 'Start'}
+              </Text>
             </TouchableHighlight>
           </View>
         </View>
@@ -91,7 +101,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   button: {
-    borderWidth: 2,
+    borderWidth: 3,
     height: 100,
     width: 100,
     borderRadius: 50,
@@ -107,6 +117,12 @@ const styles = StyleSheet.create({
   },
   lapText: {
     fontSize: 20
+  },
+  startButton: {
+    borderColor: 'green'
+  },
+  stopButton: {
+    borderColor: 'red'
   }
 });
 
