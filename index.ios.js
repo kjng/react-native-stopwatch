@@ -76,7 +76,7 @@ export default class Stopwatch extends Component {
         <View style={styles.footer}>
           {this.state.laps.map((lap, index) => {
             return <View style={styles.lap} key={index}>
-              <Text style={styles.lapText}>Lap {index}</Text>
+              <Text style={styles.lapText}>Lap {index+1}</Text>
               <Text style={styles.lapText}>{formatTime(lap)}</Text>
             </View>
           })}
