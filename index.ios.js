@@ -25,11 +25,11 @@ export default class Stopwatch extends Component {
   handleStartStopPress() {
     if (this.state.running) {
       clearInterval(this.interval);
-      this.setState({running: false, laps: [], lastLapTime: 0});
+      this.setState({running: false, lastLapTime: 0});
       return;
     }
 
-    this.setState({startTime: new Date()});
+    this.setState({startTime: new Date(), laps: []});
 
     this.interval = setInterval(() => {
       this.setState({
@@ -42,13 +42,10 @@ export default class Stopwatch extends Component {
   handleLapPress() {
     let lap = this.state.timeElapsed - this.state.lastLapTime;
     if (this.state.running) {
-
-      console.log('Pressed Lap');
       this.setState({
         laps: this.state.laps.concat([lap]),
         lastLapTime: this.state.timeElapsed
       })
-      console.log(this.state.laps);
     }
   }
 
